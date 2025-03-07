@@ -60,6 +60,11 @@ while not has_quit:
         n_str = ser.read_until(b'\n'); 
         n_int = int(n_str)
         print('Encoder counts = '+str(n_int)+'\n')
+    elif (selection == 'd'):
+        print('Requesting encoder angle: ')
+        n_str = ser.read_until(b'\n'); 
+        n_int = float(n_str)
+        print('Encoder angle = '+str(n_int)+'\n')
     elif (selection == 'r'):
         print('Requesting mode: ')
         n_str = ser.read_until(b'\n'); 
