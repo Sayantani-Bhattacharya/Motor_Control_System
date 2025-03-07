@@ -1,7 +1,10 @@
 #include "nu32dip.h"           // config bits, constants, funcs for startup and UART
-// include other header files here
+#include "utilities.h"
 #include "encoder.h"
+
+
 #define BUF_SIZE 200
+
 
 int main() 
 {
@@ -45,7 +48,7 @@ int main()
         char m[50];
         int p = get_encoder_count();
         sprintf(m, "%d\r\n", p);
-        NU32DIP_WriteUART1(m);
+        NU32DIP_WriteUART1(m);        
         break;
       }
       case 'e':
@@ -54,9 +57,18 @@ int main()
         WriteUART2("b");
         break;
       }
+      case 'r':
+      {
+        // Get mode.
+        char m[50];
+        sprintf(m, "%d\r\n", get_mode());
+        NU32DIP_WriteUART1(m);
+        break;
+      }
       case 'q':
       {
         // handle q for quit. Later you may want to return to IDLE mode here. 
+        set_mode(IDLE);
         break;
       }
       default:

@@ -45,7 +45,7 @@ has_quit = False
 while not has_quit:
     print('PIC32 MOTOR DRIVER INTERFACE')
     # display the menu options; this list will grow
-    print('\tc: get encoder counts \te: reset encoder \td: read encoder angle \tq: Quit') # '\t' is a tab
+    print('\tc: get encoder counts \te: reset encoder \td: read encoder angle \tr: read the mode \tq: Quit') # '\t' is a tab
     # read the user's choice
     selection = input('\nENTER COMMAND: ')
     selection_endline = selection+'\n'
