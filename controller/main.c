@@ -1,9 +1,12 @@
 #include "nu32dip.h"           // config bits, constants, funcs for startup and UART
 #include "utilities.h"
 #include "encoder.h"
+#include "ina219.h"
+#include "isense.h"
 
 
 #define BUF_SIZE 200
+
 
 
 int main() 
@@ -11,6 +14,10 @@ int main()
   char buffer[BUF_SIZE];
   NU32DIP_Startup(); // cache on, min flash wait, interrupts on, LED/button init, UART init
   UART2_Startup();      
+  INA219_Startup(); // initialize the INA219 current sensor
+  ADC_Startup();
+
+
   __builtin_disable_interrupts();
   // in future, initialize modules or peripherals here
   __builtin_enable_interrupts();
@@ -20,6 +27,24 @@ int main()
     NU32DIP_ReadUART1(buffer,BUF_SIZE); // we expect the next character to be a menu command
     // NU32_LED2 = 1;                   // clear the error LED
     switch (buffer[0]) {
+      case 'a':
+      {
+        // read the encoder count and send it to the computer
+        char m[50];
+        float p = get_current_counts();
+        sprintf(m, "%.2f\r\n", p);  // Format to 2 decimal places
+        NU32DIP_WriteUART1(m);
+        break;
+      } 
+      case 'b':
+      {
+        // read the encoder count and send it to the computer
+        char m[50];
+        float p = get_current_mA();
+        sprintf(m, "%.2f\r\n", p);  // Format to 2 decimal places
+        NU32DIP_WriteUART1(m);
+        break;
+      } 
       case 'd':                      
       {
         // read the encoder count and send it to the computer
@@ -56,7 +81,7 @@ int main()
         // read the encoder count and send it to the computer
         WriteUART2("b");
         break;
-      }
+      } 
       case 'r':
       {
         // Get mode.
