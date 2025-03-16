@@ -30,8 +30,8 @@ static volatile int REFarray[PLOTPTS];                   // reference values to 
 
 void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Position_Controller(void) { // _TIMER_2_VECTOR = 8 
     static int counter = 0; 
-    OC1RS = 3000;
-    // Waveform[counter];              // OCIRS copies value to ocir at the right time, so its safer to set ocirs.         
+    // OC1RS = 3000;
+    OCIRS = Waveform[counter];              // OCIRS copies value to ocir at the right time, so its safer to set ocirs.         
     // add one to counter every time ISR is entered
     if (counter == NUMSAMPS) {
         counter = 0;
@@ -44,7 +44,7 @@ void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Position_Controller(void) { // _TIMER_2_VE
 void makeWaveform() 
 {
     // int i = 0, center = (PR2+1)/2, A = (PR2 +1)/4 ; // square wave, fill in center value and amplitude
-    int i = 0, center = 500, A = 300;
+    int i = 0, center = 1500, A = 1400;
     for (i = 0; i < NUMSAMPS; ++i) 
     {
         if ( i < NUMSAMPS/2) 
