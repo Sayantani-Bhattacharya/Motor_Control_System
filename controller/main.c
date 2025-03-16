@@ -45,6 +45,18 @@ int main()
         NU32DIP_WriteUART1(m);
         break;
       } 
+      case 'c':
+      {
+        // read the encoder count and send it to the computer
+        WriteUART2("a");
+        while(!get_encoder_flag()) {;}
+        set_encoder_flag(0);
+        char m[50];
+        int p = get_encoder_count();
+        sprintf(m, "%d\r\n", p);
+        NU32DIP_WriteUART1(m);        
+        break;
+      }
       case 'd':                      
       {
         // read the encoder count and send it to the computer
@@ -63,18 +75,6 @@ int main()
         // sprintf(buffer,"%d\r\n", n + 1); // return the number + 1
         // NU32DIP_WriteUART1(buffer);
         // break;
-      }
-        case 'c':
-      {
-        // read the encoder count and send it to the computer
-        WriteUART2("a");
-        while(!get_encoder_flag()) {;}
-        set_encoder_flag(0);
-        char m[50];
-        int p = get_encoder_count();
-        sprintf(m, "%d\r\n", p);
-        NU32DIP_WriteUART1(m);        
-        break;
       }
       case 'e':
       {
