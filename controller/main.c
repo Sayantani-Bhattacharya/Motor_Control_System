@@ -3,6 +3,8 @@
 #include "encoder.h"
 #include "ina219.h"
 #include "isense.h"
+#include "currentControl.c"
+#include "positionControl.h"
 
 
 #define BUF_SIZE 200
@@ -69,12 +71,6 @@ int main()
         sprintf(m, "%.2f\r\n", angle);  // Format to 2 decimal places
         NU32DIP_WriteUART1(m);
         break;
-        // int n = 0;        // dummy command for demonstration purposes
-        // NU32DIP_ReadUART1(buffer,BUF_SIZE);
-        // sscanf(buffer, "%d", &n);
-        // sprintf(buffer,"%d\r\n", n + 1); // return the number + 1
-        // NU32DIP_WriteUART1(buffer);
-        // break;
       }
       case 'e':
       {
@@ -82,6 +78,14 @@ int main()
         WriteUART2("b");
         break;
       } 
+      case 'f':
+      {
+        // Set PWM mode and signal to the H-Bridge Output compare.
+        set_mode(PWM);
+        // Seting the position control ISR.
+        position_ISR_Setup();
+        break;
+      }
       case 'r':
       {
         // Get mode.
