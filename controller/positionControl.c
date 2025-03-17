@@ -39,6 +39,7 @@ void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Position_Controller(void) { // _TIMER_2_VE
     } 
     else if (operatingMode == 1) {
         // OC1RS = 3000;
+        set_direction(1); // set the direction to forward
         OC1RS = Waveform[counter];              // OCIRS copies value to ocir at the right time, so its safer to set ocirs.         
         // Add one to counter every time ISR is entered
         if (counter == NUMSAMPS) {
@@ -92,6 +93,18 @@ void makeWaveform()
 //   return ADC1BUF0;
 // }
 
+void set_direction(int dir)
+{
+    TRISACLR = 0x1;  // Set RA0 as output
+    if (dir == 1) {
+        
+        LATASET = 0x1;  // Set RA0 HIGH: Amti-clockwise.
+        
+    } 
+    else if (dir == -1) {
+        LATACLR = 0x1;  // Set RA0 LOW: Clockwise
+    }
+}
 
 void position_ISR_Setup(void)
 {
