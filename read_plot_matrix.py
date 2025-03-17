@@ -104,6 +104,7 @@ while not has_quit:
 
     elif (selection == 'k'):
         print('Testing current control: ')
+        read_plot_matrix()
 
     elif (selection == 'p'):
         print('Unpower the motor: ')   

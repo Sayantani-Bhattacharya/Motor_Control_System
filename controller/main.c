@@ -8,7 +8,6 @@
 
 
 #define BUF_SIZE 200
-static volatile float kp_cc = 0.0, ki_cc = 0.0;
 static volatile float kp_pc, ki_pc, kd_pc = 0.0;
 
 
@@ -111,15 +110,22 @@ int main()
       }
       case 'g':
       {
+        float ki_tmp, kp_tmp;
         // Set the current control gains.
-        NU32DIP_ReadUART1(buffer, BUF_SIZE); // read the next character
-        sscanf(buffer, "%f %f", &kp_cc, &ki_cc);
+        NU32DIP_ReadUART1(buffer, BUF_SIZE); // read the next character        
+        sscanf(buffer, "%f %f", &kp_tmp, &ki_tmp);
+        // ki_tmp = 89.0;
+        set_gains(kp_tmp, ki_tmp);
         break;
       }
       case 'h':
       {
         // read current gains
-        sprintf(buffer, "Kp: %f, Ki: %f\r\n", kp_cc, ki_cc);
+        float kp_tmp, ki_tmp ;
+        // get_gains(&kp_tmp, &ki_tmp);
+        kp_tmp =getKp_current();
+        ki_tmp = getKi_current();
+        sprintf(buffer, "Kp: %f, Ki: %f\r\n", kp_tmp, ki_tmp);
         NU32DIP_WriteUART1(buffer);        
         break;
       }
@@ -130,6 +136,22 @@ int main()
         set_mode(ITEST);
         // Seting the position control ISR.
         position_ISR_Setup();
+        // perform_i_test();
+        // int current_mode = get_mode();
+        // while (current_mode != 0)
+        // {
+        //   int current_mode = get_mode();
+        // }
+        // sprintf(buffer, "%d\r\n", PLOTPTS);
+        // NU32DIP_WriteUART1(buffer);
+        // if (currentMode == 0)
+        // {
+        //   for (int i = 0; i < PLOTPTS; i++)
+        //   {
+        //     sprintf(buffer, "%f %f\r\n", refCurrent[i], actCurrent[i]);
+        //     NU32DIP_WriteUART1(buffer);
+        //   }
+        // }
         break;
       }
 
