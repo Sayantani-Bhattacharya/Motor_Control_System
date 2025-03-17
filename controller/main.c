@@ -94,6 +94,14 @@ int main()
         NU32DIP_WriteUART1(m);
         break;
       }
+      case 'p':
+      {
+        // Unpower the motor, and set the mode to IDLE.
+        set_mode(IDLE);
+        // Seting the position control ISR.
+        position_ISR_Setup();
+        break;
+      }
       case 'q':
       {
         // handle q for quit. Later you may want to return to IDLE mode here. 

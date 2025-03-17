@@ -1,5 +1,6 @@
 #include "positionControl.h"
 
+
 #define NUMSAMPS 1000     // number of points in waveform
 #define PLOTPTS 200      // number of data points to plot
 #define DECIMATION 10    // plot every DECIMATIONth sample plot every 10th data
@@ -30,13 +31,21 @@ static volatile int REFarray[PLOTPTS];                   // reference values to 
 
 void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Position_Controller(void) { // _TIMER_2_VECTOR = 8 
     static int counter = 0; 
-    // OC1RS = 3000;
-    OCIRS = Waveform[counter];              // OCIRS copies value to ocir at the right time, so its safer to set ocirs.         
-    // add one to counter every time ISR is entered
-    if (counter == NUMSAMPS) {
-        counter = 0;
-        // roll the counter over when needed
+
+    auto operatingMode = get_mode(); // get the current mode
+    if (operatingMode == 0) {
+        OC1RS = 0; // turn off the PWM output, break the motor motion.
+        return;
+    } 
+    else if (operatingMode == 1) {
+        // OC1RS = 3000;
+        OC1RS = Waveform[counter];              // OCIRS copies value to ocir at the right time, so its safer to set ocirs.         
+        // Add one to counter every time ISR is entered
+        if (counter == NUMSAMPS) {
+            counter = 0; // roll the counter over when needed        
+        }
     }
+    
     IFS0bits.T2IF = 0;            // clear interrupt flag IFS0<8>
 
 }
