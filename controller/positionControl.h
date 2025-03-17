@@ -1,7 +1,9 @@
-#include "nu32dip.h"           // config bits, constants, funcs for startup and UART
+// in case f: pwm mode, basically main will use f .. etc to set mode, and this will use the mode to command OCIRS
 
-// Function Declarations
+// use getMode
+// use ISR 5/kz: Set OCIRS
 
-void position_ISR_Setup(void);
-void makeWaveform(void);
-// void ADC_Startup(void);
+
+// IDLE : ocirs 
+// PWM : ocirs
+// ITEST

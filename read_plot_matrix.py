@@ -46,7 +46,8 @@ while not has_quit:
     print('PIC32 MOTOR DRIVER INTERFACE')
     # display the menu options; this list will grow
     print('\ta: read current sensor (ADC counts) \tb: read current sensor (mA) \tc: get encoder counts \td: read encoder angle \te: reset /'
-    'encoder  \tf: Set PWM (-100 to 100)  \tp: Unpower the motor \tr: read the mode \tq: Quit') # '\t' is a tab
+    'encoder  \tf: Set PWM (-100 to 100) \tg: Set current gains \th: Get current gains \tk: Test current control /'
+    '\tp: Unpower the motor \tr: read the mode \tq: Quit') # '\t' is a tab
     # read the user's choice
     selection = input('\nENTER COMMAND: ')
     selection_endline = selection+'\n'
@@ -81,6 +82,7 @@ while not has_quit:
         
     elif (selection == 'f'):
         print('Setting PWM (-100 to 100): ')   
+        ############### Add the user inpput and direction from here later. ##########
 
     elif (selection == 'p'):
         print('Unpower the motor: ')   
