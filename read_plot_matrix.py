@@ -41,12 +41,12 @@ print('Opening port: ')
 print(ser.name)
 
 has_quit = False
-# menu loop
+# Menu loop
 while not has_quit:
     print('PIC32 MOTOR DRIVER INTERFACE')
     # display the menu options; this list will grow
     print('\ta: read current sensor (ADC counts) \tb: read current sensor (mA) \tc: get encoder counts \td: read encoder angle \te: reset /'
-    'encoder  \tf: Set PWM (-100 to 100) \tg: Set current gains \th: Get current gains \tk: Test current control /'
+    'encoder  \tf: Set PWM (-100 to 100) \tg: Set current gains \th: Get current gains \tk: Test current control  \to: Read plot matrix /'
     '\tp: Unpower the motor \tr: read the mode \tq: Quit') # '\t' is a tab
     # read the user's choice
     selection = input('\nENTER COMMAND: ')
@@ -83,6 +83,27 @@ while not has_quit:
     elif (selection == 'f'):
         print('Setting PWM (-100 to 100): ')   
         ############### Add the user inpput and direction from here later. ##########
+
+    elif (selection == 'g'):
+        # Convert into float and send to PIC
+        kp_n_str = input('Enter current gain kp: ')
+        ki_n_str = input('Enter current gain ki: ') 
+        kp = float(kp_n_str) # turn it into an int
+        ki = float(ki_n_str)
+        print(f"Current gains set to Kp: {kp} and Ki: {ki}\n")  # print it to the screen to double check
+        current_gain_str = f"{kp} {ki}\n" # send the number
+        print(f"Current gains string: {current_gain_str}")
+        ser.write(current_gain_str.encode())
+
+    elif (selection == 'h'):
+        print('Get Current gains: ')
+        gains = ser.readline().decode().strip()
+        kp_value = float(gains.split("Kp:")[1].split(",")[0].strip())
+        ki_value = float(gains.split("Ki:")[1].strip())
+        print(f"Kp: {kp_value} and Ki: {ki_value}\n")
+
+    elif (selection == 'k'):
+        print('Testing current control: ')
 
     elif (selection == 'p'):
         print('Unpower the motor: ')   

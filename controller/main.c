@@ -3,12 +3,13 @@
 #include "encoder.h"
 #include "ina219.h"
 #include "isense.h"
-#include "currentControl.c"
+#include "currentControl.h"
 #include "positionControl.h"
 
 
 #define BUF_SIZE 200
-
+static volatile float kp_cc = 0.0, ki_cc = 0.0;
+static volatile float kp_pc, ki_pc, kd_pc = 0.0;
 
 
 int main() 
@@ -108,6 +109,30 @@ int main()
         set_mode(IDLE);
         break;
       }
+      case 'g':
+      {
+        // Set the current control gains.
+        NU32DIP_ReadUART1(buffer, BUF_SIZE); // read the next character
+        sscanf(buffer, "%f %f", &kp_cc, &ki_cc);
+        break;
+      }
+      case 'h':
+      {
+        // read current gains
+        sprintf(buffer, "Kp: %f, Ki: %f\r\n", kp_cc, ki_cc);
+        NU32DIP_WriteUART1(buffer);        
+        break;
+      }
+      
+      case 'k':
+      {
+        // Testing the current control.
+        set_mode(ITEST);
+        // Seting the position control ISR.
+        position_ISR_Setup();
+        break;
+      }
+
       default:
       {
         // NU32DIP_LED2 = 0;  // turn on LED2 to indicate an error.
