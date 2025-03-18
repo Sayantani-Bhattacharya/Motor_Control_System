@@ -1,7 +1,7 @@
 #include "currentControl.h"
 // #include "main.c"
 
-#define NUMSAMPS 1000     // number of points in waveform
+#define NUMSAMPS 1000    // number of points in waveform
 #define PLOTPTS 100      // number of data points to plot
 #define DECIMATION 10    // plot every DECIMATIONth sample plot every 10th data
 #define MAX_ITEST_COUNTER 99
@@ -19,20 +19,9 @@ static float REFCurrent[PLOTPTS];   // reference values to plotx
 static float ACTCurrent[PLOTPTS];   // measured values to plot
 volatile int dutyCycle = 0;
 
-volatile float kp_cc = 01.0, ki_cc = 10.0; // PI gains
-
-
-// static volatile int StoringData = 0;                     // flag to start storing data if flag 1, currently storing.
-static volatile int itest_counter = 0; // counter for ITEST mode
-
-// static volatile float Kp=0, Ki=0, Kd=0, Eintmax=0;                  // PID gains
-// static volatile int Eint = 0;                             // control effort integral
-
-// unsigned int adc_sample_convert(int pin);
-// Need to know if in position control mode, // ISR  // use getMode
-// Case statements:  if in position control mode, hold, track, ....
-
-// Short no of cases.
+volatile float kp_cc = 01.0, ki_cc = 10.0;               // PI gains
+// static volatile int StoringData = 0;                  // flag to start storing data if flag 1, currently storing.
+static volatile int itest_counter = 0;                   // counter for ITEST mode
 
 void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Position_Controller(void) { // _TIMER_2_VECTOR = 8 
     static int counter = 0; 
@@ -60,7 +49,7 @@ void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Position_Controller(void) { // _TIMER_2_VE
         // OC1RS =  Val;
         set_direction(1);   // set the direction to forward
 
-        float actCurrent = get_current_counts(); // read the ADC value
+        float actCurrent = get_current_mA(); // read the ADC value
 
         if(itest_counter == 25)
         {
@@ -77,13 +66,21 @@ void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Position_Controller(void) { // _TIMER_2_VE
         {
             set_direction(-1);
             Val = -1500;
-            // float error = - actCurrent - Val;
         }           
         else if (itest_counter == MAX_ITEST_COUNTER) {
             set_mode(0); // set the mode to IDLE 
             itest_counter = 0; // roll the counter over when needed
             eint = 0; // reset the integral error      
         }
+        // char buffer[BUF_SIZE];
+        // sprintf(buffer,"Counter: %d\n\r", itest_counter);
+        // NU32DIP_WriteUART1(buffer);
+
+        // OC1RS =  Waveform[counter]; // turn off the PWM output, break the motor motion.        
+        // Add one to counter every time ISR is entered.
+        itest_counter += 1;
+        operatingMode = get_mode();
+
 
         float error = Val - actCurrent; // error = reference - actual
         eint = eint + error; // accumulate the error
@@ -103,10 +100,7 @@ void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Position_Controller(void) { // _TIMER_2_VE
         REFCurrent[itest_counter] = Val;
 		ACTCurrent[itest_counter] = actCurrent;
         perform_i_test();
-
-        // OC1RS =  Waveform[counter]; // turn off the PWM output, break the motor motion.        
-        // Add one to counter every time ISR is entered.
-        itest_counter += 1; 
+         
     }
     IFS0bits.T2IF = 0;            // clear interrupt flag IFS0<8>
 }
@@ -116,14 +110,17 @@ void perform_i_test(void)
     // Code to trandfer the data of plots to python.
     char buffer[BUF_SIZE];
     int current_mode = get_mode();
-    while (current_mode != 0)
-    {
-        int current_mode = get_mode();
-    }
-    sprintf(buffer, "%d\r\n", PLOTPTS);
-    NU32DIP_WriteUART1(buffer);
+    // while (current_mode != 0)
+    // {
+    //     sprintf(buffer,"Current Mode: %d\n\r", current_mode);
+    //     NU32DIP_WriteUART1(buffer);
+    //     int current_mode = get_mode();
+    // }
+    
     if (current_mode == 0)
     {
+        sprintf(buffer, "%d\r\n", PLOTPTS);
+        NU32DIP_WriteUART1(buffer);
         for (int i = 0; i < PLOTPTS; i++)
         {
         sprintf(buffer, "%f %f\r\n", REFCurrent[i], ACTCurrent[i]);
@@ -148,31 +145,6 @@ void makeWaveform()
         }
     }
 }
-
-// void ADC_Startup(){
-//   ANSELAbits.ANSA1 = 1; // AN1 is an adc pin
-//   AD1CON3bits.ADCS = 1; // ADC clock period is Tad = 2*(ADCS+1)*Tpb =2*2*(1/48000000Hz) = 83ns > 75ns
-//   AD1CON1bits.ADON = 1;
-// }
-
-// unsigned int adc_sample_convert(int pin)
-// {
-//   unsigned int elapsed = 0, finish_time = 0;
-//   AD1CHSbits.CH0SA = pin;
-//   AD1CON1bits.SAMP = 1;
-//   elapsed = _CP0_GET_COUNT();
-//   finish_time = elapsed + SAMPLE_TIME;
-//   while (_CP0_GET_COUNT() < finish_time)
-//   {
-//     ;
-//   }
-//   AD1CON1bits.SAMP = 0;
-//   while (!AD1CON1bits.DONE)
-//   {
-//     ;
-//   }
-//   return ADC1BUF0;
-// }
 
 void set_direction(int dir)
 {

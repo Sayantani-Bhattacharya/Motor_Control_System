@@ -4,7 +4,7 @@ void ADC_Startup(){
     INA219_Startup();
 }
 
-float get_current_counts()
+float get_current_mA()
 {
     // Consider reading the ADC a few times and averaging for a more stable reading.
     // count (0-1023)
@@ -12,7 +12,7 @@ float get_current_counts()
     return a;
 }
 
-float get_current_mA()
+float get_current_counts()
 {
     float a = readINA219(0x04);
     return a;    
