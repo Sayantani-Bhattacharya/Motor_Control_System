@@ -1,9 +1,21 @@
-// in case f: pwm mode, basically main will use f .. etc to set mode, and this will use the mode to command OCIRS
+#include "nu32dip.h"           // config bits, constants, funcs for startup and UART
+#include "isense.h"
+// #include "utilities.h"
 
-// use getMode
-// use ISR 5/kz: Set OCIRS
+
+// Function Declarations
+// void position_ISR_Setup(void);
+// void makeWaveform(void);
+float getKp_position(void);
+float getKi_position(void);
+float getKd_position(void);
+void set_position_gains(float kp, float ki, float kd);
+// void perform_i_test(void);
 
 
-// IDLE : ocirs 
-// PWM : ocirs
-// ITEST
+
+
+
+
+
+

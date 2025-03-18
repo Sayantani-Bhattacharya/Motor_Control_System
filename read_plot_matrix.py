@@ -47,8 +47,9 @@ while not has_quit:
     # display the menu options; this list will grow
     print('\ta: read current sensor (ADC counts) \tb: read current sensor (mA) \tc: get encoder counts \td: read encoder angle \te: reset /'
     'encoder  \tf: Set PWM (-100 to 100) \tg: Set current gains \th: Get current gains \tk: Test current control  \to: Read plot matrix /'
-    '\tp: Unpower the motor \tr: read the mode \tq: Quit') # '\t' is a tab
-    # read the user's choice
+    '\tp: Unpower the motor \tr: read the mode \ti:Set position gains \tj:Get position gains \tl:Go to angle (deg) \tq: Quit') # '\t' is a tab
+    
+    # Read the user's choice
     selection = input('\nENTER COMMAND: ')
     selection_endline = selection+'\n'
      
@@ -102,8 +103,27 @@ while not has_quit:
         ki_value = float(gains.split("Ki:")[1].strip())
         print(f"Kp: {kp_value} and Ki: {ki_value}\n")
 
+    elif (selection == 'i'):
+        Kpos_input = input("Enter proportional gain value: ")
+        Kipos_input = input("Enter integral gain value: ")
+        Kdpos_input = input("Enter derivative gain value: ")
+        Kpos_flt = float(Kpos_input)
+        Kipos_flt = float(Kipos_input)
+        Kdpos_flt = float(Kdpos_input)
+        print(f"Position gains set to Kp: {Kpos_flt}, Ki: {Kipos_flt}, Kd: {Kdpos_flt}\n")
+        gains_str = f"{Kpos_flt} {Kipos_flt} {Kdpos_flt}\n"
+        ser.write(gains_str.encode())
+    
+    elif (selection == 'j'):
+        gains = ser.readline().decode().strip()
+        kp_value = float(gains.split("Kp:")[1].split(",")[0].strip())
+        ki_value = float(gains.split("Ki:")[1].split(",")[0].strip())
+        kd_value = float(gains.split("Kd:")[1].strip())
+        print(f"Kp: {kp_value}, Ki: {ki_value} and Kd: {kd_value}\n")
+   
+
     elif (selection == 'k'):
-        print('Testing current control: ')
+        print('Testing current control gains:\n ')
         read_plot_matrix()
 
     elif (selection == 'p'):
@@ -114,6 +134,7 @@ while not has_quit:
         n_str = ser.read_until(b'\n'); 
         n_int = int(n_str)
         print('Mode = '+str(n_int)+'\n')
+
     elif (selection == 'm'):
         ref = genRef('cubic')
         #print(len(ref))
@@ -126,8 +147,10 @@ while not has_quit:
         ser.write((str(len(ref))+'\n').encode())
         for i in ref:
             ser.write((str(i)+'\n').encode())
+
     elif (selection == 'o'):
         read_plot_matrix()
+        
     elif (selection == 'q'):
         print('Exiting client')
         has_quit = True; # exit client

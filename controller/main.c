@@ -135,10 +135,44 @@ int main()
         // Testing the current control.
         set_mode(ITEST);
         // Seting the position control ISR.
-        position_ISR_Setup();
+        current_ISR_Setup();
         break;
       }
 
+      case 'i':
+      {
+        // Set position gains.
+        set_mode(ITEST);
+        float ki_tmp, kp_tmp, kd_tmp;
+        // Set the current control gains.
+        NU32DIP_ReadUART1(buffer, BUF_SIZE); // read the next character        
+        sscanf(buffer, "%f %f %f", &kp_tmp, &ki_tmp, &kd_tmp);
+        // ki_tmp = 89.0;
+        set_position_gains(kp_tmp, ki_tmp, kd_tmp);
+        break;
+      }
+
+      case 'j':
+      {
+        // read position gains
+        float kp_tmp, ki_tmp, kd_tmp;
+        kp_tmp = getKp_position();
+        ki_tmp = getKi_position();
+        kd_tmp = getKd_position();
+        sprintf(buffer, "Kp: %f, Ki: %f, Kd: %f\r\n", kp_tmp, ki_tmp, kd_tmp);
+        NU32DIP_WriteUART1(buffer);        
+        break;
+      }
+      case 'l':
+      {
+        // Testing the current control.
+        // HOLD mode.
+        set_mode(3);
+        // Seting the position control ISR.
+        // position_ISR_Setup();
+        break;
+      }   
+      
       default:
       {
         // NU32DIP_LED2 = 0;  // turn on LED2 to indicate an error.
