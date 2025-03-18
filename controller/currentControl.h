@@ -1,6 +1,6 @@
 #include "nu32dip.h"           // config bits, constants, funcs for startup and UART
 #include "isense.h"
-
+#include "utilities.h"
 // Function Declarations
 
 void position_ISR_Setup(void);

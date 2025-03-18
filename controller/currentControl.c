@@ -33,13 +33,22 @@ void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Position_Controller(void) { // _TIMER_2_VE
     } 
     // PWM MODE
     else if (operatingMode == 1) {
-        // OC1RS = 3000;
-        set_direction(1); // set the direction to forward
-        OC1RS = Waveform[counter];              // OCIRS copies value to ocir at the right time, so its safer to set ocirs.         
+        // OC1RS = 3000;         // OCIRS copies value to ocir at the right time, so its safer to set ocirs.  
+        if (dutyCycle > 0)
+		{
+			OC1RS = PR3 * dutyCycle / 100;
+            set_direction(1); // set the direction to forward
+		}
+		else if (dutyCycle < 0)
+		{
+			OC1RS = -PR3 * dutyCycle / 100;
+            set_direction(-1); // set the direction to forward
+		}
         // Add one to counter every time ISR is entered
         if (counter == NUMSAMPS) {
             counter = 0; // roll the counter over when needed        
         }
+        return;
     }    
     // ITEST MODE
     else if (operatingMode == 2) {
@@ -71,16 +80,10 @@ void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Position_Controller(void) { // _TIMER_2_VE
             set_mode(0); // set the mode to IDLE 
             itest_counter = 0; // roll the counter over when needed
             eint = 0; // reset the integral error      
-        }
-        // char buffer[BUF_SIZE];
-        // sprintf(buffer,"Counter: %d\n\r", itest_counter);
-        // NU32DIP_WriteUART1(buffer);
-
-        // OC1RS =  Waveform[counter]; // turn off the PWM output, break the motor motion.        
+        }        
         // Add one to counter every time ISR is entered.
         itest_counter += 1;
         operatingMode = get_mode();
-
 
         float error = Val - actCurrent; // error = reference - actual
         eint = eint + error; // accumulate the error
@@ -123,8 +126,8 @@ void perform_i_test(void)
         NU32DIP_WriteUART1(buffer);
         for (int i = 0; i < PLOTPTS; i++)
         {
-        sprintf(buffer, "%f %f\r\n", REFCurrent[i], ACTCurrent[i]);
-        NU32DIP_WriteUART1(buffer);
+            sprintf(buffer, "%f %f\r\n", REFCurrent[i], ACTCurrent[i]);
+            NU32DIP_WriteUART1(buffer);
         }
     }
 }
@@ -187,13 +190,8 @@ void position_ISR_Setup(void)
     PR2 = 3999;                // set period register, period = (PR2+1) * N * 12.5 ns = 20 kHz
     TMR2 = 0;
 
-
-
-
-
-
     // Timer 3 for ISR frequency
-    PR3 = 3999;
+    PR3 = 2399; // 20kHz PWM frequency
     TMR3 = 0;                // clear timer 3
     OC1CONbits.OCM = 0b110;    // PWM mode without fault pin; other OC1CON bits are defaults
     

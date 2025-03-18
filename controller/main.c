@@ -1,5 +1,5 @@
 #include "nu32dip.h"           // config bits, constants, funcs for startup and UART
-#include "utilities.h"
+// #include "utilities.h"
 #include "encoder.h"
 #include "ina219.h"
 #include "isense.h"
