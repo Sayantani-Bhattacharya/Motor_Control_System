@@ -4,13 +4,14 @@
 
 
 // Function Declarations
-// void position_ISR_Setup(void);
-// void makeWaveform(void);
+void position_ISR_Setup(void);
 float getKp_position(void);
 float getKi_position(void);
 float getKd_position(void);
 void set_position_gains(float kp, float ki, float kd);
-// void perform_i_test(void);
+float set_desired_angle(float angle);
+float get_commanded_current(void);
+
 
 
 

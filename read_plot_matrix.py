@@ -121,6 +121,13 @@ while not has_quit:
         kd_value = float(gains.split("Kd:")[1].strip())
         print(f"Kp: {kp_value}, Ki: {ki_value} and Kd: {kd_value}\n")
    
+    elif (selection == 'l'):
+        desiredInput= input("Entire the desired angle in degrees: ")
+        desiredAngle = float(desiredInput)
+        print(f"Desired angle set to: {desiredAngle}\n")
+        angle_str = f"{desiredAngle}\n"
+        ser.write(angle_str.encode())
+        read_plot_matrix()
 
     elif (selection == 'k'):
         print('Testing current control gains:\n ')
