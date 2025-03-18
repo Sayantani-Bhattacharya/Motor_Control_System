@@ -4,7 +4,7 @@
 #define PLOTPTS 100   // number of data points to plot
 #define BUF_SIZE 200
 
-volatile float kp_pc = 1.0, ki_pc = 10.0, kd_pc = 0.0;  
+volatile float kp_pc = 1.0, ki_pc = 0.0, kd_pc = 0.0;  
 static int ptest_counter = 0;
 static volatile float desiredAngle = 0.0;
 static volatile float commandedCurrent = 0.0;

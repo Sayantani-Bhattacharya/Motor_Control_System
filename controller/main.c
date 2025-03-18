@@ -8,7 +8,6 @@
 
 
 #define BUF_SIZE 200
-static volatile float kp_pc, ki_pc, kd_pc = 0.0;
 
 
 int main() 
@@ -18,6 +17,7 @@ int main()
   UART2_Startup();      
   INA219_Startup(); // initialize the INA219 current sensor
   ADC_Startup();
+  // current_ISR_Setup();
 
 
   __builtin_disable_interrupts();
@@ -102,12 +102,14 @@ int main()
         current_ISR_Setup();
         break;
       }
+
       case 'q':
       {
         // handle q for quit. Later you may want to return to IDLE mode here. 
         set_mode(IDLE);
         break;
       }
+
       case 'g':
       {
         float ki_tmp, kp_tmp;
@@ -118,18 +120,18 @@ int main()
         set_gains(kp_tmp, ki_tmp);
         break;
       }
+
       case 'h':
       {
         // read current gains
         float kp_tmp, ki_tmp ;
-        // get_gains(&kp_tmp, &ki_tmp);
         kp_tmp =getKp_current();
         ki_tmp = getKi_current();
         sprintf(buffer, "Kp: %f, Ki: %f\r\n", kp_tmp, ki_tmp);
         NU32DIP_WriteUART1(buffer);        
         break;
       }
-      
+
       case 'k':
       {
         // Testing the current control.
@@ -165,11 +167,19 @@ int main()
       }
       case 'l':
       {
+        float desiredAngle;
         // Testing the current control.
+        // Read the desired angle.
+        NU32DIP_ReadUART1(buffer, BUF_SIZE);
+			  sscanf(buffer, "%f", &desiredAngle);
+        // Set the desired angle.
+        set_desired_angle(desiredAngle);
+        set_desired_angle_in_cc(desiredAngle);
         // HOLD mode.
-        set_mode(3);
+        current_ISR_Setup();
         // Seting the position control ISR.
-        // position_ISR_Setup();
+        position_ISR_Setup();
+        set_mode(HOLD);
         break;
       }   
       
