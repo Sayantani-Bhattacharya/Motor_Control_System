@@ -3,7 +3,7 @@
 #include "utilities.h"
 // Function Declarations
 
-void position_ISR_Setup(void);
+void current_ISR_Setup(void);
 void makeWaveform(void);
 float getKp_current(void);
 float getKi_current(void);

@@ -162,7 +162,7 @@ void set_direction(int dir)
     }
 }
 
-void position_ISR_Setup(void)
+void current_ISR_Setup(void)
 {
     // ADC_Startup();    
     __builtin_disable_interrupts(); // INT step 2: disable interrupts at CPU   

@@ -83,7 +83,7 @@ int main()
         // Set PWM mode and signal to the H-Bridge Output compare.
         set_mode(PWM);
         // Seting the position control ISR.
-        position_ISR_Setup();
+        current_ISR_Setup();
         break;
       }
       case 'r':
@@ -99,7 +99,7 @@ int main()
         // Unpower the motor, and set the mode to IDLE.
         set_mode(IDLE);
         // Seting the position control ISR.
-        position_ISR_Setup();
+        current_ISR_Setup();
         break;
       }
       case 'q':
@@ -136,22 +136,6 @@ int main()
         set_mode(ITEST);
         // Seting the position control ISR.
         position_ISR_Setup();
-        // perform_i_test();
-        // int current_mode = get_mode();
-        // while (current_mode != 0)
-        // {
-        //   int current_mode = get_mode();
-        // }
-        // sprintf(buffer, "%d\r\n", PLOTPTS);
-        // NU32DIP_WriteUART1(buffer);
-        // if (currentMode == 0)
-        // {
-        //   for (int i = 0; i < PLOTPTS; i++)
-        //   {
-        //     sprintf(buffer, "%f %f\r\n", refCurrent[i], actCurrent[i]);
-        //     NU32DIP_WriteUART1(buffer);
-        //   }
-        // }
         break;
       }
 
