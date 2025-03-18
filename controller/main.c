@@ -189,11 +189,10 @@ int main()
 
       case 'm':
       {
-        // step trajectory
+        // Step trajectory
         int index = 0;
         NU32DIP_ReadUART1(buffer, BUF_SIZE);
         sscanf(buffer, "%d", &trajectorySize);
-
         for(index = 0; index < trajectorySize; index++){
           NU32DIP_ReadUART1(buffer,BUF_SIZE);
           sscanf(buffer, "%f", &refTraj[index]);
@@ -202,6 +201,23 @@ int main()
         set_desired_trajectory(refTraj);       
         break;
       }
+
+      case 'n':
+      {
+        // Cubic trajectory
+        int index = 0;
+        NU32DIP_ReadUART1(buffer, BUF_SIZE);
+        sscanf(buffer, "%d", &trajectorySize);
+        for(index = 0; index < trajectorySize; index++){
+          NU32DIP_ReadUART1(buffer,BUF_SIZE);
+          sscanf(buffer, "%f", &refTraj[index]);
+        }
+        // Set the trajectory
+        set_desired_trajectory(refTraj);       
+        break;
+      }
+
+
       
       default:
       {

@@ -171,18 +171,6 @@ while not has_quit:
         print(f"Executing Trajectory!\n")
         read_plot_matrix()
 
-    # elif (selection == 'm'):
-    #     ref = genRef('cubic')
-    #     #print(len(ref))
-    #     t = range(len(ref))
-    #     plt.plot(t,ref,'r*-')
-    #     plt.ylabel('angle in degrees')
-    #     plt.xlabel('index')
-    #     plt.show()
-    #     # send 
-    #     ser.write((str(len(ref))+'\n').encode())
-    #     for i in ref:
-    #         ser.write((str(i)+'\n').encode())
 
     elif (selection == 'o'):
         read_plot_matrix()
