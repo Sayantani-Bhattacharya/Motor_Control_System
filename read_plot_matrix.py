@@ -1,12 +1,16 @@
-# chapter 28 in python
-
 # sudo apt-get install python3-pip
 # python3 -m pip install pyserial
 # sudo apt-get install python3-matplotlib
 
-
+from genref import genRef
 import matplotlib.pyplot as plt 
 from statistics import mean 
+import serial
+ser = serial.Serial('/dev/ttyUSB0',230400)
+
+print('Opening port: ')
+print(ser.name)
+
 def read_plot_matrix():
     n_str = ser.read_until(b'\n');  # get the number of data points to receive
     n_int = int(n_str) # turn it into an int
@@ -32,52 +36,47 @@ def read_plot_matrix():
     plt.xlabel('index')
     plt.show()
 
-from genref import genRef
-
-import serial
-ser = serial.Serial('/dev/ttyUSB0',230400)
-
-print('Opening port: ')
-print(ser.name)
-
 has_quit = False
 # Menu loop
 while not has_quit:
     print('PIC32 MOTOR DRIVER INTERFACE')
-    # display the menu options; this list will grow
+    # Display the menu options.
     print('\ta: read current sensor (ADC counts) \tb: read current sensor (mA) \tc: get encoder counts \td: read encoder angle \te: reset /'
     'encoder  \tf: Set PWM (-100 to 100) \tg: Set current gains \th: Get current gains \tk: Test current control  \to: Read plot matrix /'
+    '\tm: Load step trajectory   \tn: Load cubic trajectory  \to: Execute trajectory   /'
     '\tp: Unpower the motor \tr: read the mode \ti:Set position gains \tj:Get position gains \tl:Go to angle (deg) \tq: Quit') # '\t' is a tab
     
     # Read the user's choice
     selection = input('\nENTER COMMAND: ')
     selection_endline = selection+'\n'
      
-    # send the command to the PIC32
+    # Send the command to the PIC32
     ser.write(selection_endline.encode()); # .encode() turns the string into a char array
     
-    # take the appropriate action
-    # there is no switch() in python, using if elif instead
     if (selection == 'a'):
         print('Requesting current sensor (ADC counts): ')
         n_str = ser.read_until(b'\n'); 
         n_int = float(n_str)
         print('current sensor (ADC counts) value = '+str(n_int)+'\n')
+    
     elif (selection == 'b'):
         print('Requesting current sensor (mA): ')
         n_str = ser.read_until(b'\n'); 
         n_int = float(n_str)
         print('current sensor (mA) value = '+str(n_int)+'\n')
+    
     elif (selection == 'c'):
         print('Requesting encoder counts: ')
         n_str = ser.read_until(b'\n'); 
         n_int = int(n_str)
         print('Encoder counts = '+str(n_int)+'\n')
+    
     elif (selection == 'd'):
         print('Requesting encoder angle: ')
         n_str = ser.read_until(b'\n'); 
         n_int = float(n_str)
         print('Encoder angle = '+str(n_int)+'\n')
+    
     elif (selection == 'e'):
         print('Resetting encoder: ')
         
@@ -142,18 +141,48 @@ while not has_quit:
         n_int = int(n_str)
         print('Mode = '+str(n_int)+'\n')
 
-    elif (selection == 'm'):
-        ref = genRef('cubic')
-        #print(len(ref))
+    elif(selection == 'm'):
+        ref = genRef('step')
+        size = len(ref)
+        print(size)
         t = range(len(ref))
-        plt.plot(t,ref,'r*-')
-        plt.ylabel('angle in degrees')
+        plt.plot(t, ref, 'r*-')
+        plt.ylabel('value')
         plt.xlabel('index')
         plt.show()
-        # send 
-        ser.write((str(len(ref))+'\n').encode())
-        for i in ref:
-            ser.write((str(i)+'\n').encode())
+        ser.write(f"{size}\n".encode())
+        for val in ref:
+            ser.write(f"{val}\n".encode())
+
+    elif (selection == 'n'):
+        cref = genRef('cubic')
+        cubicsize = len(cref)
+        print(cubicsize)
+        t = range(len(cref))
+        plt.plot(t, cref, 'r*-')
+        plt.ylabel('value')
+        plt.xlabel('index')
+        plt.show()
+        ser.write(f"{cubicsize}\n".encode())
+        for val in cref:
+            ser.write(f"{val}\n".encode())
+
+    elif (selection == 'o'):
+        print(f"Executing Trajectory!\n")
+        read_plot_matrix()
+
+    # elif (selection == 'm'):
+    #     ref = genRef('cubic')
+    #     #print(len(ref))
+    #     t = range(len(ref))
+    #     plt.plot(t,ref,'r*-')
+    #     plt.ylabel('angle in degrees')
+    #     plt.xlabel('index')
+    #     plt.show()
+    #     # send 
+    #     ser.write((str(len(ref))+'\n').encode())
+    #     for i in ref:
+    #         ser.write((str(i)+'\n').encode())
 
     elif (selection == 'o'):
         read_plot_matrix()
@@ -161,7 +190,7 @@ while not has_quit:
     elif (selection == 'q'):
         print('Exiting client')
         has_quit = True; # exit client
-        # be sure to close the port
+        # Close the port
         ser.close()
     else:
         print('Invalid Selection ' + selection_endline)

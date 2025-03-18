@@ -3,6 +3,8 @@
 #define MAX_PTEST_COUNTER 99
 #define PLOTPTS 100   // number of data points to plot
 #define BUF_SIZE 200
+#define MAX_ARRAY_SIZE 1000
+
 
 volatile float kp_pc = 1.0, ki_pc = 0.0, kd_pc = 0.0;  
 static int ptest_counter = 0;
@@ -10,6 +12,8 @@ static volatile float desiredAngle = 0.0;
 static volatile float commandedCurrent = 0.0;
 static float refAngle[PLOTPTS];
 static float actAngle[PLOTPTS];
+static float refTraj[MAX_ARRAY_SIZE];
+
 
 void __ISR(_TIMER_4_VECTOR, IPL6SOFT) Position_Controller(void)
 {
@@ -55,7 +59,13 @@ float get_commanded_current(void)
     return commandedCurrent;
 }
 
-float set_desired_angle(float angle)
+void set_desired_trajectory(int refTraj[])
+{
+    // Take this as user input
+    refTraj = refTraj;
+}
+
+void set_desired_angle(float angle)
 {
     // Take this as user input
     desiredAngle = angle;

@@ -8,6 +8,10 @@
 
 
 #define BUF_SIZE 200
+#define MAX_ARRAY_SIZE 1000
+static volatile int trajectorySize = 0;
+static float refTraj[MAX_ARRAY_SIZE];
+
 
 
 int main() 
@@ -182,6 +186,22 @@ int main()
         set_mode(HOLD);
         break;
       }   
+
+      case 'm':
+      {
+        // step trajectory
+        int index = 0;
+        NU32DIP_ReadUART1(buffer, BUF_SIZE);
+        sscanf(buffer, "%d", &trajectorySize);
+
+        for(index = 0; index < trajectorySize; index++){
+          NU32DIP_ReadUART1(buffer,BUF_SIZE);
+          sscanf(buffer, "%f", &refTraj[index]);
+        }
+        // Set the trajectory
+        set_desired_trajectory(refTraj);       
+        break;
+      }
       
       default:
       {
