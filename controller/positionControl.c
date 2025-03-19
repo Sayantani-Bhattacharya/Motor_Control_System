@@ -8,6 +8,7 @@
 
 volatile float kp_pc = 1.0, ki_pc = 0.0, kd_pc = 0.0;  
 static int ptest_counter = 0;
+static int ref_counter = 0;
 static volatile float desiredAngle = 0.0;
 static volatile float commandedCurrent = 0.0;
 static float refAngle[PLOTPTS];
@@ -50,7 +51,27 @@ void __ISR(_TIMER_4_VECTOR, IPL6SOFT) Position_Controller(void)
 		eprev = 0.0;
 	}
 
-    // OC1RS = -PR4 * dutyCycle / 100;
+    else if (operatingMode == 4) // TRACK
+    {
+        WriteUART2("a");
+        while (!get_encoder_flag())
+        {
+        }
+        set_encoder_flag(0);
+        int cnt = get_encoder_count();
+        float degreesPerCount = 360.0 / (334 * 4);
+        float encoderAngle = cnt * degreesPerCount;
+
+        float e = refTraj[ref_counter] - encoderAngle;
+        float edot = e - eprev;
+        eint = eint + e;
+        commandedCurrent = (kp_pc * e) + (ki_pc * eint) + (kd_pc * edot);
+        eprev = e;
+        actAngle[ptest_counter] = encoderAngle;
+        refAngle[ptest_counter] = refTraj[ref_counter];
+        ptest_counter++;
+    }
+
     IFS0bits.T4IF = 0; // clear interrupt flag IFS0<8>
 }
 

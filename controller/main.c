@@ -217,7 +217,14 @@ int main()
         break;
       }
 
-
+      case 'o':
+      {
+        // Start trajectory tracking
+        set_mode(TRACK);
+        current_ISR_Setup();
+        position_ISR_Setup();
+        break;
+      }
       
       default:
       {

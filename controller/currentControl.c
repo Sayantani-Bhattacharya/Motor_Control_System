@@ -176,7 +176,52 @@ void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Current_Controller(void)
             eint = 0;
         }
     }
+    // TRACK MODE
+    else if (operatingMode ==4)
+    {
+        float actCurrent = get_current_mA();
+        float desiredCurrent = get_commanded_current();
+        float error = desiredCurrent - actCurrent;
+        eint = eint + error;
+        dutyCycle = (kp_cc * error) + (ki_cc * eint);
+        if (dutyCycle > 100.0)
+        {
+            dutyCycle = 100.0;
+        }
+        if (dutyCycle <= -100.0)
+        {
+            dutyCycle = -100.0;
+        }
+        OC1RS = (unsigned int)(abs(dutyCycle) / 100.0 * PR3);
+        if (dutyCycle >= 0)
+        {
+            set_direction(1);
+            // NU32DIP_WriteUART1("Forward\n\r");
+        }
+        else
+        {
+            set_direction(-1);
+            // NU32DIP_WriteUART1("Backward\n\r");
+        }
+        
+        // Reached Max counter value.
+        hold_counter++;
 
+        // Plot the data.
+        int cnt = get_encoder_count();
+		float degreesPerCount = 360.0 / (334 * 4);
+		float encoderAngle = cnt * degreesPerCount;
+        actAngle[hold_counter] = encoderAngle;
+		refAngle[hold_counter] = desiredAngle;
+
+        if (hold_counter >= MAX_HOLD_COUNTER)
+        {
+            set_mode(0);
+            plot_current_data();
+            counter = 0;
+            eint = 0;
+        }
+    }
     IFS0bits.T2IF = 0; // clear interrupt flag IFS0<8>
 }
 
