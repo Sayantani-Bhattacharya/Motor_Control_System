@@ -212,7 +212,7 @@ int main()
           NU32DIP_ReadUART1(buffer,BUF_SIZE);
           sscanf(buffer, "%f", &refTraj[index]);
         }
-        // Set the trajectory
+        // Set the trajectory         --------- TODO
         set_desired_trajectory(refTraj);       
         break;
       }

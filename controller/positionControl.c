@@ -80,15 +80,15 @@ float get_commanded_current(void)
     return commandedCurrent;
 }
 
-void set_desired_trajectory(int refTraj[])
+void set_desired_trajectory(float refTraj[])
 {
-    // Take this as user input
+    // Take this as user input.
     refTraj = refTraj;
 }
 
 void set_desired_angle(float angle)
 {
-    // Take this as user input
+    // Take this as user input.
     desiredAngle = angle;
 }
 

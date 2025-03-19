@@ -17,7 +17,7 @@
 static volatile int Waveform[NUMSAMPS]; // waveform
 static float REFCurrent[PLOTPTS]; // reference values to plotx
 static float ACTCurrent[PLOTPTS]; // measured values to plot
-volatile int dutyCycle = 0;
+volatile float dutyCycle = 0;
 static volatile float desiredAngle = 0.0;
 static float refAngle[MAX_HOLD_COUNTER];
 static float actAngle[MAX_HOLD_COUNTER];
@@ -107,6 +107,8 @@ void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Current_Controller(void)
         dutyCycle = (kp_cc * error) + (ki_cc * eint);
         // write the duty cycle to uart
 
+        
+
         if (dutyCycle > 100.0)
         {
             dutyCycle = 100.0;
@@ -115,15 +117,23 @@ void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Current_Controller(void)
         {
             dutyCycle = -100.0;
         }
+
+
         OC1RS = (unsigned int)(abs(dutyCycle) / 100.0 * PR3);
+        // if (dutyCycle != 0.0 )
+        // {
+        //     char buffer[BUF_SIZE];
+        //     sprintf(buffer, " OC1RS: %d\n\r", OC1RS);
+        //     NU32DIP_WriteUART1(buffer);
+        // }
         if (dutyCycle >= 0)
         {
-            set_direction(1);
+            set_direction(-1);
             // NU32DIP_WriteUART1("Forward\n\r");
         }
         else
         {
-            set_direction(-1);
+            set_direction(1);
             // NU32DIP_WriteUART1("Backward\n\r");
         }
         REFCurrent[itest_counter] = Val;
@@ -149,12 +159,12 @@ void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Current_Controller(void)
         OC1RS = (unsigned int)(abs(dutyCycle) / 100.0 * PR3);
         if (dutyCycle >= 0)
         {
-            set_direction(1);
+            set_direction(-1);
             // NU32DIP_WriteUART1("Forward\n\r");
         }
         else
         {
-            set_direction(-1);
+            set_direction(1);
             // NU32DIP_WriteUART1("Backward\n\r");
         }
         
@@ -195,12 +205,12 @@ void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Current_Controller(void)
         OC1RS = (unsigned int)(abs(dutyCycle) / 100.0 * PR3);
         if (dutyCycle >= 0)
         {
-            set_direction(1);
+            set_direction(-1);
             // NU32DIP_WriteUART1("Forward\n\r");
         }
         else
         {
-            set_direction(-1);
+            set_direction(1);
             // NU32DIP_WriteUART1("Backward\n\r");
         }
         

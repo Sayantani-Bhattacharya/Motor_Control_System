@@ -11,7 +11,7 @@ float getKd_position(void);
 void set_position_gains(float kp, float ki, float kd);
 void set_desired_angle(float angle);
 float get_commanded_current(void);
-void set_desired_trajectory(int refTraj[]);
+void set_desired_trajectory(float refTraj[]);
 
 
 
