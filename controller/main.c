@@ -11,6 +11,7 @@
 #define MAX_ARRAY_SIZE 1000
 static volatile int trajectorySize = 0;
 static float refTraj[MAX_ARRAY_SIZE];
+volatile int dutyCycle_tmp = 0;
 
 
 
@@ -84,10 +85,12 @@ int main()
       } 
       case 'f':
       {
-        // Set PWM mode and signal to the H-Bridge Output compare.
-        set_mode(PWM);
         // Seting the position control ISR.
         current_ISR_Setup();
+        sscanf(buffer, "%d", &dutyCycle_tmp);
+        set_dutycycle(dutyCycle_tmp);
+        // Set PWM mode and signal to the H-Bridge Output compare.
+			  set_mode(PWM);
         break;
       }
       case 'r':

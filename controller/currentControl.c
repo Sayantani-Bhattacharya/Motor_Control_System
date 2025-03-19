@@ -26,6 +26,8 @@ volatile float kp_cc = 1.5, ki_cc = 0.1; // PI gains
 static int itest_counter = 0; // counter for ITEST mode
 static int hold_counter = 0;  // counter for HOLD mode
 static float eint = 0;        // integral error for current control
+// volatile int dutyCycle = 0;
+
 
 void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Current_Controller(void)
 {
@@ -41,7 +43,6 @@ void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Current_Controller(void)
     // PWM MODE
     else if (operatingMode == 1)
     {
-        // OC1RS = 3000;         // OCIRS copies value to ocir at the right time, so its safer to set ocirs.
         if (dutyCycle > 0)
         {
             OC1RS = PR3 * dutyCycle / 100;
@@ -51,11 +52,6 @@ void __ISR(_TIMER_2_VECTOR, IPL5SOFT) Current_Controller(void)
         {
             OC1RS = -PR3 * dutyCycle / 100;
             set_direction(-1); // set the direction to forward
-        }
-        // Add one to counter every time ISR is entered
-        if (counter == NUMSAMPS)
-        {
-            counter = 0; // roll the counter over when needed
         }
         return;
     }
@@ -341,6 +337,11 @@ void current_ISR_Setup(void)
     IFS0bits.T2IF = 0;             // INT step 5: clear interrupt flag
     IEC0bits.T2IE = 1;             // INT step 6: enable interrupt
     __builtin_enable_interrupts(); // INT step 7: enable interrupts at CPU
+}
+
+void set_dutycycle(int dc)
+{
+    dutyCycle = dc;
 }
 
 void set_gains(float kp, float ki)

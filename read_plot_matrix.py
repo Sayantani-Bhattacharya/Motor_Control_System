@@ -81,8 +81,11 @@ while not has_quit:
         print('Resetting encoder: ')
         
     elif (selection == 'f'):
-        print('Setting PWM (-100 to 100): ')   
-        ############### Add the user inpput and direction from here later. ##########
+        print('Setting PWM (-100 to 100): ')  
+        pwm_input = input("Enter PWM value (-100 to 100): ")
+        pwm_int = int(pwm_input)
+        print(f"PWM value set to {pwm_int}\n")
+        ser.write((str(pwm_int)+'\n').encode())
 
     elif (selection == 'g'):
         # Convert into float and send to PIC

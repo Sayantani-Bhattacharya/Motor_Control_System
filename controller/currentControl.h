@@ -7,6 +7,7 @@
 // Function Declarations
 void current_ISR_Setup(void);
 void makeWaveform(void);
+void set_dutycycle(int dc);
 float getKp_current(void);
 float getKi_current(void);
 void set_gains(float kp, float ki);
