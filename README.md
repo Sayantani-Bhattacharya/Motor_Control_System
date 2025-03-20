@@ -32,5 +32,5 @@ I-TEST Results:
 - 'm': Reads and sets a step trajectory for the motor.
 - 'n': Reads and sets a cubic trajectory for the motor.
 - 'o': Starts trajectory tracking mode.
-
+- 'q': Quit the menu.
   
